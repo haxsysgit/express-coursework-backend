@@ -4,7 +4,7 @@
     "location": "London",
     "price": 30,
     "space": 5,
-    "image": "/imgs/mathematics.png",
+    "image": "/imgs/mathematics-1.png",
     "description": "Master algebra, geometry, and calculus with interactive examples."
   },
   {
@@ -12,7 +12,7 @@
     "location": "Manchester",
     "price": 25,
     "space": 5,
-    "image": "/imgs/english-literature.png",
+    "image": "/imgs/english-literature-1.png",
     "description": "Dive into Literature, poetry, and creative writing."
   },
   {
@@ -20,7 +20,7 @@
     "location": "Bristol",
     "price": 35,
     "space": 5,
-    "image": "/imgs/physics.png",
+    "image": "/imgs/physics-1.png",
     "description": "Learn motion, forces, and electricity with experiments."
   },
   {
@@ -28,7 +28,7 @@
     "location": "Online",
     "price": 32,
     "space": 5,
-    "image": "/imgs/chemistry.png",
+    "image": "/imgs/chemistry-1.png",
     "description": "Understand atoms, elements, and reactions through labs."
   },
   {
@@ -36,7 +36,7 @@
     "location": "London",
     "price": 28,
     "space": 5,
-    "image": "/imgs/biology.png",
+    "image": "/imgs/biology-1.png",
     "description": "Explore genetics, ecology, and anatomy interactively."
   },
   {
@@ -44,7 +44,7 @@
     "location": "Online",
     "price": 40,
     "space": 5,
-    "image": "/imgs/computer-science.png",
+    "image": "/imgs/computer-science-1.png",
     "description": "Learn Python, algorithms, and software design."
   },
   {
@@ -52,7 +52,7 @@
     "location": "Leeds",
     "price": 20,
     "space": 5,
-    "image": "/imgs/art-design.png",
+    "image": "/imgs/art-design-1.png",
     "description": "Practice drawing, painting, and creative design."
   },
   {
@@ -60,7 +60,7 @@
     "location": "Birmingham",
     "price": 27,
     "space": 5,
-    "image": "/imgs/music.png",
+    "image": "/imgs/music-1.png",
     "description": "Learn instruments, rhythm, and musical theory."
   },
   {
@@ -68,7 +68,7 @@
     "location": "Manchester",
     "price": 24,
     "space": 5,
-    "image": "/imgs/french.png",
+    "image": "/imgs/french-1.png",
     "description": "Speak, read, and write in French through fun activities."
   },
   {
@@ -76,7 +76,7 @@
     "location": "London",
     "price": 24,
     "space": 5,
-    "image": "/imgs/spanish.png",
+    "image": "/imgs/spanish-1.png",
     "description": "Learn conversational Spanish for daily use."
   },
   {
@@ -84,7 +84,7 @@
     "location": "Bristol",
     "price": 22,
     "space": 5,
-    "image": "/imgs/drama.png",
+    "image": "/imgs/drama-1.png",
     "description": "Act, improvise, and build confidence on stage."
   },
   {
@@ -92,7 +92,7 @@
     "location": "Birmingham",
     "price": 26,
     "space": 5,
-    "image": "/imgs/history.png",
+    "image": "/imgs/history-1.png",
     "description": "Explore ancient civilizations and modern revolutions."
   },
   {
@@ -100,7 +100,7 @@
     "location": "Leeds",
     "price": 23,
     "space": 5,
-    "image": "/imgs/geography.png",
+    "image": "/imgs/geography-1.png",
     "description": "Study Earth's landscapes, climates, and resources."
   },
   {
@@ -108,7 +108,7 @@
     "location": "Online",
     "price": 38,
     "space": 5,
-    "image": "/imgs/economics.png",
+    "image": "/imgs/economics-1.png",
     "description": "Understand supply, demand, and global trade."
   },
   {
@@ -116,7 +116,7 @@
     "location": "London",
     "price": 29,
     "space": 5,
-    "image": "/imgs/philosophy.png",
+    "image": "/imgs/philosophy-1.png",
     "description": "Discuss ideas, logic, and ethics."
   },
   {
@@ -124,7 +124,7 @@
     "location": "Manchester",
     "price": 33,
     "space": 5,
-    "image": "/imgs/psychology.png",
+    "image": "/imgs/psychology-1.png",
     "description": "Study human mind, emotions, and behavior."
   }
 ]

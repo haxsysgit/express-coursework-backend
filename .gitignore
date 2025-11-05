@@ -1,3 +1,6 @@
 node_modules
 connectionstr.txt
 .env
+package-lock.json
+seed.lessons.json
+seed.lessons.local.json
