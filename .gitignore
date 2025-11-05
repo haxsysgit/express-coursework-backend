@@ -4,3 +4,4 @@ connectionstr.txt
 package-lock.json
 seed.lessons.json
 seed.lessons.local.json
+scripts/

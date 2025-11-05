@@ -1,0 +1,70 @@
+{
+  "info": {
+    "name": "Coursework Backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Local testing collection for Express + MongoDB (native driver)"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "lessonId1", "value": "690b79af952aaa800042e2ca" },
+    { "key": "lessonId2", "value": "690b79af952aaa800042e2ce" }
+  ],
+  "item": [
+    {
+      "name": "GET /",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/"
+      }
+    },
+    {
+      "name": "GET /lessons",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/lessons"
+      }
+    },
+    {
+      "name": "POST /orders (lessonIDs + space)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Alice\",\n  \"phone\": \"1234567890\",\n  \"lessonIDs\": [\"{{lessonId1}}\"],\n  \"space\": 1\n}"
+        },
+        "url": "{{baseUrl}}/orders"
+      }
+    },
+    {
+      "name": "POST /orders (items[])",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Bob\",\n  \"phone\": \"5550001111\",\n  \"items\": [\n    { \"lessonId\": \"{{lessonId2}}\", \"space\": 2 }\n  ]\n}"
+        },
+        "url": "{{baseUrl}}/orders"
+      }
+    },
+    {
+      "name": "PUT /lessons/:id",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"space\": 4\n}"
+        },
+        "url": "{{baseUrl}}/lessons/{{lessonId1}}"
+      }
+    }
+  ]
+}
