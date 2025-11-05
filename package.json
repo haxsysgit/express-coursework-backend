@@ -21,7 +21,10 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "images:download": "python3 scripts/download_images.py",
+    "seed": "node scripts/seed.js",
+    "seed:drop": "node scripts/seed.js --drop"
   },
   "dependencies": {
     "cors": "^2.8.5",
