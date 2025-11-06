@@ -63,6 +63,8 @@ function toObjectIdSafe(id) {
   try { return new ObjectId(String(id)); } catch { return null; }
 }
 
+function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
 function buildOrderDoc(body) {
   const { name, phone, lessonIDs, space, items } = body || {};
   const nameOk = typeof name === 'string' && /^[A-Za-z ]+$/.test(name);
@@ -94,6 +96,28 @@ app.get('/lessons', async (req, res) => {
     res.json(lessons);
   } catch (e) {
     res.status(500).json({ error: 'Failed to fetch lessons' });
+  }
+});
+
+app.get('/search', async (req, res) => {
+  try {
+    const termRaw = (req.query.term || '').toString();
+    const term = termRaw.trim();
+    if (!term) return res.json([]);
+    const re = new RegExp(escapeRegex(term), 'i');
+    const reStr = escapeRegex(term);
+    const db = await getDb();
+    const results = await db.collection('lesson').find({
+      $or: [
+        { topic: { $regex: re } },
+        { location: { $regex: re } },
+        { $expr: { $regexMatch: { input: { $toString: '$price' }, regex: reStr, options: 'i' } } },
+        { $expr: { $regexMatch: { input: { $toString: '$space' }, regex: reStr, options: 'i' } } }
+      ]
+    }).toArray();
+    res.json(results);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to search lessons' });
   }
 });
 
