@@ -11,6 +11,7 @@
   "bugs": {
     "url": "https://github.com/haxsysgit/express-coursework-backend/issues"
   },
+  "engines": { "node": "20.x" },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/haxsysgit/express-coursework-backend.git"

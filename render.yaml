@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: express-coursework-backend
+    env: node
+    plan: free
+    branch: main
+    autoDeploy: true
+    buildCommand: ""          # Node services usually don’t need this
+    startCommand: node server.js
+    healthCheckPath: /
