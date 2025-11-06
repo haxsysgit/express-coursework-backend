@@ -35,11 +35,18 @@ app.use((req, res, next) => {
 });
 
 // CORS allowlist: set CORS_ORIGINS in .env as comma-separated URLs (Pages + localhost)
-const origins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+const normalizeOrigin = (value) => {
+  if (!value) return '';
+  return value.replace(/\/$/, '').toLowerCase();
+};
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean).map(normalizeOrigin);
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
-    if (!origins.length || origins.includes(origin)) return callback(null, true);
+    const normalized = normalizeOrigin(origin);
+    const pass = !allowedOrigins.length || allowedOrigins.some(allowed => allowed === normalized || allowed.startsWith(normalized + '/'));
+    if (pass) return callback(null, true);
+    console.warn(`[cors] Blocked origin ${origin}`);
     return callback(null, false);
   },
   methods: ['GET','POST','PUT','OPTIONS'],
