@@ -5,6 +5,5 @@ services:
     plan: free
     branch: main
     autoDeploy: true
-    buildCommand: ""          # Node services usually don’t need this
     startCommand: node server.js
     healthCheckPath: /
