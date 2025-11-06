@@ -5,9 +5,10 @@
     "description": "Local testing collection for Express + MongoDB (native driver)"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "baseUrl", "value": "https://express-coursework-backend.onrender.com" },
     { "key": "lessonId1", "value": "690b79af952aaa800042e2ca" },
-    { "key": "lessonId2", "value": "690b79af952aaa800042e2ce" }
+    { "key": "lessonId2", "value": "690b79af952aaa800042e2ce" },
+    { "key": "term", "value": "a" }
   ],
   "item": [
     {
@@ -64,6 +65,13 @@
           "raw": "{\n  \"space\": 4\n}"
         },
         "url": "{{baseUrl}}/lessons/{{lessonId1}}"
+      }
+    },
+    {
+      "name": "GET /search?term={{term}}",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/search?term={{term}}"
       }
     }
   ]
