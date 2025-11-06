@@ -73,6 +73,34 @@
         "method": "GET",
         "url": "{{baseUrl}}/search?term={{term}}"
       }
+    },
+    {
+      "name": "GET /lessons/:id",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/lessons/{{lessonId1}}"
+      }
+    },
+    {
+      "name": "GET /lessons (paginated+sorted)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/lessons?limit=3&sort=price&order=desc"
+      }
+    },
+    {
+      "name": "GET /health/db",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health/db"
+      }
+    },
+    {
+      "name": "GET /status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/status"
+      }
     }
   ]
 }
