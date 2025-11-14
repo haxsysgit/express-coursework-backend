@@ -1,32 +1,38 @@
-// CST3144 Backend server
-// Sets up Express, connects to MongoDB (native driver), and exposes API routes.
+// --- Core dependencies (think: Flask + tooling in Python) ---
+// Express → like Flask: defines routes and middleware.
 const express = require('express');
+// CORS → like Flask-CORS: controls which origins can call the API.
 const cors = require('cors');
+// Path → Node's pathlib equivalent for safe path joins.
 const path = require('path');
+// Helmet → similar to Flask-Talisman for security headers.
 const helmet = require('helmet');
+// Crypto → used here like Python's uuid module for request IDs.
 const crypto = require('crypto');
+// Compression → comparable to using Flask-Compress.
 const compression = require('compression');
+// express-rate-limit → akin to Flask-Limiter for throttling.
 const rateLimit = require('express-rate-limit');
+// MongoDB driver → Python analogue would be pymongo.
 const { MongoClient, ObjectId } = require('mongodb');
+// Dotenv → like python-dotenv to load .env files.
 const dotenv = require('dotenv');
 
-// Load environment variables from Backend/.env (contains MONGODB_URI, etc.)
+// Load env vars from Backend/.env (URI, DB name, CORS origins) just like load_dotenv()
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-// Create the Express application
 const app = express();
-// Trust proxy (Render and similar platforms) so req.ip is correct
+// Trust proxy like Flask's ProxyFix to keep req.ip accurate behind reverse proxies.
 app.set('trust proxy', 1);
 
-// Security headers (allow cross-origin resource policy for images to be used by frontend)
+// --- Global middleware (rough Python equivalents in comments) ---
+// Helmet ≈ Flask-Talisman: security headers
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-
-// Parse JSON request bodies so POST/PUT can read req.body
+// Fast JSON parser with payload cap (Flask's request.get_json + max content-length)
 app.use(express.json({ limit: '100kb' }));
-
-// Compression
+// Compression ≈ Flask-Compress
 app.use(compression());
-
+// Simple request ID middleware (Flask alternative: before_request generating g.request_id)
 app.use((req, res, next) => {
   const id = req.headers['x-request-id'] || crypto.randomUUID();
   res.setHeader('x-request-id', id);
@@ -34,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS allowlist: set CORS_ORIGINS in .env as comma-separated URLs (Pages + localhost)
+// --- CORS allowlist (like configuring Flask-CORS with origins=...) ---
 const normalizeOrigin = (value) => {
   if (!value) return '';
   return value.replace(/\/$/, '').toLowerCase();
@@ -54,7 +60,7 @@ app.use(cors({
   credentials: false
 }));
 
-// Logger middleware: prints time, method, URL, status, and duration for every request
+// Request logger similar to Flask's after_request hooks printing method/status/duration
 app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
@@ -64,7 +70,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate limiting (global + specific routes)
+// Global + route-specific throttling (Flask-Limiter style)
 const globalLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false });
 app.use(globalLimiter);
 const searchLimiter = rateLimit({ windowMs: 60 * 1000, max: 60, standardHeaders: true, legacyHeaders: false });
@@ -72,20 +78,19 @@ app.use('/search', searchLimiter);
 const ordersLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 50, standardHeaders: true, legacyHeaders: false });
 app.use('/orders', ordersLimiter);
 
-// Serve local images from Backend/imgs as /imgs/...
+// Static file serving; imagine Flask's send_from_directory for /imgs
 const imgsDir = path.join(__dirname, 'imgs');
 app.use('/imgs', express.static(imgsDir, { maxAge: '1d', immutable: true }));
 app.use('/imgs', (req, res) => {
   res.status(404).json({ error: 'Image not found' });
 });
 
-// MongoDB connection details (native driver). DB created in Atlas.
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.DB_NAME || 'coursework-backend';
 let client;
 let database;
 
-// Lazily connect to MongoDB and reuse the connection across requests
+// Lazy connection helper similar to creating a pymongo MongoClient once per process
 async function getDb() {
   if (database) return database;
   if (!uri) throw new Error('MONGODB_URI not set');
@@ -95,13 +100,15 @@ async function getDb() {
   return database;
 }
 
-// Helpers: ID conversion and order document builder
+// ObjectId casting helper (Python equivalent: bson.ObjectId)
 function toObjectIdSafe(id) {
   try { return new ObjectId(String(id)); } catch { return null; }
 }
 
+// Escape user regex input (Python analogue: re.escape)
 function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
+// Normalise incoming order payloads; similar to validating request.json in Flask
 function buildOrderDoc(body) {
   const { name, phone, lessonIDs, space, items } = body || {};
   const nameOk = typeof name === 'string' && /^[A-Za-z ]+$/.test(name);
@@ -131,7 +138,7 @@ function buildOrderDoc(body) {
   return { error: 'Provide items[] or lessonIDs[] with space' };
 }
 
-// GET /lessons → returns all lessons as JSON
+// Express route ≈ @app.route('/lessons') in Flask
 app.get('/lessons', async (req, res) => {
   try {
     const db = await getDb();
@@ -150,6 +157,7 @@ app.get('/lessons', async (req, res) => {
   }
 });
 
+// Search endpoint behaving like a Flask view using pymongo find()
 app.get('/search', async (req, res) => {
   try {
     const termRaw = (req.query.term || '').toString();
@@ -172,8 +180,7 @@ app.get('/search', async (req, res) => {
   }
 });
 
-// POST /orders → creates a new order (Name letters-only, Phone numbers-only)
-// Accepts either: { name, phone, lessonIDs: [id], space } OR { name, phone, items: [{ lessonId, space }] }
+// POST handler ≈ Flask @app.post('/orders')
 app.post('/orders', async (req, res) => {
   try {
     const { doc, error } = buildOrderDoc(req.body);
@@ -186,13 +193,12 @@ app.post('/orders', async (req, res) => {
   }
 });
 
-// PUT /lessons/:id → updates any lesson attribute (e.g., space after checkout)
+// PUT handler ≈ Flask @app.put('/lessons/<id>')
 app.put('/lessons/:id', async (req, res) => {
   try {
     const id = req.params.id;
     let oid;
     try { oid = new ObjectId(String(id)); } catch { return res.status(400).json({ error: 'Invalid id' }); }
-
     const update = Object.assign({}, req.body);
     if ('_id' in update) delete update._id;
     if (update.space != null) {
@@ -211,12 +217,28 @@ app.put('/lessons/:id', async (req, res) => {
   }
 });
 
-// Health check root route → handy to verify server is alive
+// Root route returning API metadata; mirrors a Flask view returning jsonify({...})
 app.get('/', (req, res) => {
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    service: 'CST3144 Coursework API',
+    description: 'Express backend for coursework project, serving lessons data and order management.',
+    version: require('./package.json').version,
+    uptimeSeconds: Math.round(process.uptime()),
+    endpoints: {
+      listLessons: 'GET /lessons',
+      searchLessons: 'GET /search?term=keyword',
+      lessonDetails: 'GET /lessons/:id',
+      createOrder: 'POST /orders',
+      updateLesson: 'PUT /lessons/:id',
+      healthCheck: 'GET /health/db',
+      status: 'GET /status',
+      version: 'GET /version'
+    }
+  });
 });
 
-// DB health: pings MongoDB
+// Health check similar to Flask endpoint hitting db.command('ping') via pymongo
 app.get('/health/db', async (req, res) => {
   try {
     const db = await getDb();
@@ -227,7 +249,7 @@ app.get('/health/db', async (req, res) => {
   }
 });
 
-// Runtime status (uptime, memory)
+// Runtime stats endpoint; compare with Flask using psutil/process info
 app.get('/status', (req, res) => {
   const { rss, heapTotal, heapUsed, external } = process.memoryUsage();
   res.json({
@@ -244,6 +266,7 @@ app.get('/version', (req, res) => {
   });
 });
 
+// Detail fetch route similar to Flask @app.get('/lessons/<id>')
 app.get('/lessons/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -258,21 +281,23 @@ app.get('/lessons/:id', async (req, res) => {
   }
 });
 
+// 404 handler ≈ Flask's errorhandler(404)
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found', requestId: req.requestId });
 });
 
+// 500 handler with logging; think Flask @app.errorhandler(500)
 app.use((err, req, res, next) => {
   console.error(new Date().toISOString(), 'ERROR', req.requestId, err && err.message);
   res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
 });
 
-// Start the server on PORT (Render sets process.env.PORT automatically)
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
+// Graceful shutdown hook; similar to catching SIGINT in a Python app and closing resources.
 const shutdown = async () => {
   try { if (client) await client.close(); } catch (e) {}
   server.close(() => { process.exit(0); });
@@ -280,3 +305,4 @@ const shutdown = async () => {
 };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
+
