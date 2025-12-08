@@ -6,8 +6,8 @@
   },
   "variable": [
     { "key": "baseUrl", "value": "https://express-coursework-backend.onrender.com" },
-    { "key": "lessonId1", "value": "690b79af952aaa800042e2ca" },
-    { "key": "lessonId2", "value": "690b79af952aaa800042e2ce" },
+    { "key": "lessonId1", "value": "1" },
+    { "key": "lessonId2", "value": "2" },
     { "key": "term", "value": "a" }
   ],
   "item": [

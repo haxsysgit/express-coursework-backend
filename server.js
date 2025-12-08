@@ -526,6 +526,31 @@ app.get('/version', (req, res) => {
     });
 });
 
+// HEALTH CHECK - GET /health/db
+// Checks if the database connection is active
+app.get('/health/db', async (req, res) => {
+    try {
+        const db = await connectToDatabase();
+        // Run a simple command to check connection
+        const ping = await db.command({ ping: 1 });
+        
+        res.json({
+            status: 'ok',
+            database: 'connected',
+            ping: ping,
+            requestId: req.requestId
+        });
+    } catch (error) {
+        console.error('Health check failed:', error);
+        res.status(500).json({
+            status: 'error',
+            database: 'disconnected',
+            error: error.message,
+            requestId: req.requestId
+        });
+    }
+});
+
 // HEALTH CHECK - GET /health
 // Used to check if the server is running
 app.get('/health', (req, res) => {
